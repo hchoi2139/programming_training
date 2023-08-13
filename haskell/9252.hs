@@ -9,7 +9,7 @@ fromList :: [a] -> Array Int a
 fromList xs = listArray (0, length xs - 1) xs
 
 lcs :: String -> String -> String
-lcs xs ys = reverse $ findLCS m n []
+lcs xs ys = findLCS m n []
   where
     dp :: Array (Int, Int) Int
     dp = tabulate ((0, 0), (m, n)) (uncurry memo)
@@ -32,10 +32,10 @@ lcs xs ys = reverse $ findLCS m n []
 
     findLCS :: Int -> Int -> String -> String
     findLCS i j acc
-      | c == 0    = []
+      | c == 0    = acc
       | c == l    = findLCS (i-1) j acc
       | c == t    = findLCS i (j-1) acc
-      | otherwise = (axs ! (i-1)) : findLCS (i-1) (j-1) acc
+      | otherwise = findLCS (i-1) (j-1) ((axs ! (i-1)) : acc)
       where
         c = dp ! (i, j)
         l = dp ! (i-1, j)
