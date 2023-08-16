@@ -1,6 +1,6 @@
 .PHONY: all clean
 
-TARGETS = 14003
+TARGETS = 2618
 
 all: $(TARGETS)
 
