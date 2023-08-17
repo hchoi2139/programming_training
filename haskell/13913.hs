@@ -22,17 +22,15 @@ bfs k (t : ts) acc dist
   | t == k    = readArray dist t
   | otherwise = do
     curDist <- readArray dist t
-    let candIdxs = [t * 2, t + 1, t - 1]
-    candDists <- mapM (readArray dist) candIdxs
-    let cands   = filter canWrite $ zip candIdxs candDists
+    let validIdxs = filter isValidIdx [t * 2, t + 1, t - 1]
+    candDists <- mapM (readArray dist) validIdxs
+    let cands   = filter ((< 0) . snd) $ zip validIdxs candDists
         (is, _) = unzip cands
-    forM_ cands (\(i, _) -> writeArray dist i (curDist + 1))
+    forM_ is (\i -> writeArray dist i (curDist + 1))
     bfs k ts (acc ++ is) dist
 
-canWrite :: (Int, Int) -> Bool
-canWrite (i, e)
-  | 0 <= i && i <= maxVal && e < 0 = True
-  | otherwise = False
+isValidIdx :: Int -> Bool
+isValidIdx i = 0 <= i && i <= maxVal
 
 newSTArray :: Ix i => (i, i) -> e -> ST s (STArray s i e)
 newSTArray = newArray
