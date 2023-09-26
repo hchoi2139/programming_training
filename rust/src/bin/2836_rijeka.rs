@@ -1,6 +1,8 @@
 use crate::scanner::UnsafeScanner;
 use std::{cmp, io};
 
+const INF: u32 = 1_000_000_001;
+
 fn main() {
     let stdin = io::stdin();
     let mut scan = UnsafeScanner::new(stdin.lock());
@@ -12,22 +14,21 @@ fn main() {
         let (from, to) = (scan.token::<u32>(), scan.token::<u32>());
         if from > to { backwards.push((from, to)); }
     }
-    backwards.sort_unstable();
+    backwards.sort_unstable_by(|a, b| b.cmp(a));
 
-    let (mut back_tot_len, mut l, mut r) = (0, 0, 0);
+    let (mut back_tot_len, mut l, mut r) = (0, INF, INF);
     for &(from, to) in backwards.iter() {
-        if r < to {
+        if from < l {
             back_tot_len += r - l;
             (l, r) = (to, from);
         }
         else {
-            r = cmp::max(r, from);
+            l = cmp::min(l, to)
         }
     }
     back_tot_len += r - l;
 
     println!("{}", for_tot_len + 2 * back_tot_len);
-    println!("{}", u32::MAX);
 }
 
 mod scanner {
